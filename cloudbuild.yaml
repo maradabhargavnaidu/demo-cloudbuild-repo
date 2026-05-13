@@ -14,9 +14,8 @@ steps:
     args:
       - '-c'
       - |
-        IMAGE_SRC=$(echo '$_PAYLOAD' | jq -r '.tag')
-        echo "SOURCE IMAGE: $IMAGE_SRC"
-        echo "IMAGE_SRC=$IMAGE_SRC" > /workspace/env.txt
+        echo "SOURCE IMAGE:$(echo '$_PAYLOAD' | jq -r '.tag')"
+        echo "IMAGE_SRC=$(echo '$_PAYLOAD' | jq -r '.tag')" > /workspace/env.txt
 
   # ✅ Step 3: Pull image
   - name: 'gcr.io/cloud-builders/docker'
