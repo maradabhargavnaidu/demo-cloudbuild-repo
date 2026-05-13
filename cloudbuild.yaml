@@ -1,11 +1,32 @@
 steps:
-  - name: 'ubuntu'
+  # Step 1: Print incoming payload (for debugging)
+  - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        echo "Hello World"
+        echo "Incoming message:"
+        echo "$_PAYLOAD"
+
+  # Step 2: Extract image tag
+  # - name: 'gcr.io/cloud-builders/gcloud'
+  #   id: 'extract-image'
+  #   entrypoint: 'bash'
+  #   args:
+  #     - '-c'
+  #     - |
+  #       IMAGE=$(echo '$_PAYLOAD' | jq -r '.tag')
+  #       echo "IMAGE=$IMAGE" >> /workspace/image.env
+
+  # # Step 3: Load extracted value
+  # - name: 'gcr.io/cloud-builders/docker'
+  #   entrypoint: 'bash'
+  #   args:
+  #     - '-c'
+  #     - |
+  #       source /workspace/image.env
+  #       echo "Pulling image: $IMAGE"
+  #       docker pull $IMAGE
 
 options:
   logging: CLOUD_LOGGING_ONLY
-
