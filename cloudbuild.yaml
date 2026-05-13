@@ -1,12 +1,65 @@
 steps:
-  # ✅ Step 1: Print payload
+  # ✅ Step 1: Extract image from payload
   - name: 'gcr.io/cloud-builders/bash'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         echo "Incoming Payload:"
-        echo '$_PAYLOAD' | jq -r '.tag'
+        echo '$_PAYLOAD'
+
+        IMAGE_SRC=$(echo '$_PAYLOAD' | jq -r '.tag')
+
+        echo "SOURCE IMAGE: $IMAGE_SRC"
+
+        echo "IMAGE_SRC=$IMAGE_SRC" > /workspace/env.txt
+
+  # ✅ Step 2: Pull image
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source /workspace/env.txt
+        docker pull "$IMAGE_SRC"
+
+  # ✅ Step 3: Retag for Project 2
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source /workspace/env.txt
+
+        TARGET_IMAGE=$(echo "$IMAGE_SRC" | sed 's/project-7909eb0c-53df-4426-b83/my-sec-496201/')
+
+        echo "TARGET IMAGE: $TARGET_IMAGE"
+
+        echo "TARGET_IMAGE=$TARGET_IMAGE" >> /workspace/env.txt
+
+        docker tag "$IMAGE_SRC" "$TARGET_IMAGE"
+
+  # ✅ Step 4: Push image
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source /workspace/env.txt
+        docker push "$TARGET_IMAGE"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+#steps:
+  # ✅ Step 1: Print payload
+  #- name: 'gcr.io/cloud-builders/bash'
+   # entrypoint: 'bash'
+    #args:
+      #- '-c'
+      #- |
+       # echo "Incoming Payload:"
+       # echo '$_PAYLOAD' | jq -r '.tag'
 
   # # ✅ Step 2: Extract image
   # - name: 'gcr.io/cloud-builders/bash'
@@ -48,5 +101,5 @@ steps:
   #       source /workspace/env.txt
   #       docker push "$TARGET_IMAGE"
 
-options:
-  logging: CLOUD_LOGGING_ONLY
+# options:
+#  logging: CLOUD_LOGGING_ONLY
