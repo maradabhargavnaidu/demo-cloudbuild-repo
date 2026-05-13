@@ -5,9 +5,7 @@ steps:
     args:
       - '-c'
       - |
-        echo "$_PAYLOAD" | base64 -d > message.json
-        echo "Decoded message:"
-        cat message.json
+        echo "$_PAYLOAD" 
 
 #   # Step 2: Extract image
 #   - name: 'gcr.io/cloud-builders/gcloud'
