@@ -1,32 +1,32 @@
 steps:
-  # Step 1: Print incoming payload (for debugging)
+  # Step 1: Decode Pub/Sub message
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        echo "Incoming message:"
-        echo "$_PAYLOAD"
+        echo "$_PAYLOAD" | base64 -d > message.json
+        echo "Decoded message:"
+        cat message.json
 
-  # Step 2: Extract image tag
-  # - name: 'gcr.io/cloud-builders/gcloud'
-  #   id: 'extract-image'
-  #   entrypoint: 'bash'
-  #   args:
-  #     - '-c'
-  #     - |
-  #       IMAGE=$(echo '$_PAYLOAD' | jq -r '.tag')
-  #       echo "IMAGE=$IMAGE" >> /workspace/image.env
+#   # Step 2: Extract image
+#   - name: 'gcr.io/cloud-builders/gcloud'
+#     entrypoint: 'bash'
+#     args:
+#       - '-c'
+#       - |
+#         IMAGE=$(jq -r '.tag' message.json)
+#         echo "IMAGE=$IMAGE" >> /workspace/image.env
 
-  # # Step 3: Load extracted value
-  # - name: 'gcr.io/cloud-builders/docker'
-  #   entrypoint: 'bash'
-  #   args:
-  #     - '-c'
-  #     - |
-  #       source /workspace/image.env
-  #       echo "Pulling image: $IMAGE"
-  #       docker pull $IMAGE
+#   # Step 3: Pull image
+#   - name: 'gcr.io/cloud-builders/docker'
+#     entrypoint: 'bash'
+#     args:
+#       - '-c'
+#       - |
+#         source /workspace/image.env
+#         echo "Pulling: $IMAGE"
+#         docker pull $IMAGE
 
-options:
-  logging: CLOUD_LOGGING_ONLY
+# options:
+#   logging: CLOUD_LOGGING_ONLY
