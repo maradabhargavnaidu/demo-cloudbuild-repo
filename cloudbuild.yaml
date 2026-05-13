@@ -6,48 +6,47 @@ steps:
       - '-c'
       - |
         echo "Incoming Payload:"
-        echo '$_PAYLOAD'
+        echo '$_PAYLOAD' | jq -r '.tag'
 
-  # ✅ Step 2: Extract image
-  - name: 'gcr.io/cloud-builders/bash'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        echo "SOURCE IMAGE:$(echo '$_PAYLOAD' | jq -r '.tag')"
-        echo "IMAGE_SRC=$(echo '$_PAYLOAD' | jq -r '.tag')" > /workspace/env.txt
+  # # ✅ Step 2: Extract image
+  # - name: 'gcr.io/cloud-builders/bash'
+  #   entrypoint: 'bash'
+  #   args:
+  #     - '-c'
+  #     - |
+  #       echo "SOURCE IMAGE:$(echo '$_PAYLOAD' | jq -r '.tag')"
+  #       echo "IMAGE_SRC=$(echo '$_PAYLOAD' | jq -r '.tag')" > /workspace/env.txt
 
-  # ✅ Step 3: Pull image
-  - name: 'gcr.io/cloud-builders/docker'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        source /workspace/env.txt
-        docker pull "$IMAGE_SRC"
+  # # ✅ Step 3: Pull image
+  # - name: 'gcr.io/cloud-builders/docker'
+  #   entrypoint: 'bash'
+  #   args:
+  #     - '-c'
+  #     - |
+  #       docker pull "$_PAYLOAD.tag"
 
-  # ✅ Step 4: Tag for Project 2
-  - name: 'gcr.io/cloud-builders/docker'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        source /workspace/env.txt
+  # # ✅ Step 4: Tag for Project 2
+  # - name: 'gcr.io/cloud-builders/docker'
+  #   entrypoint: 'bash'
+  #   args:
+  #     - '-c'
+  #     - |
+  #       source /workspace/env.txt
 
-        TARGET_IMAGE=$(echo "$IMAGE_SRC" | sed 's/project-7909eb0c-53df-4426-b83/my-sec-496201/')
+  #       TARGET_IMAGE=$(echo "$IMAGE_SRC" | sed 's/project-7909eb0c-53df-4426-b83/my-sec-496201/')
 
-        echo "TARGET_IMAGE=$TARGET_IMAGE" > /workspace/env.txt
+  #       echo "TARGET_IMAGE=$TARGET_IMAGE" > /workspace/env.txt
 
-        docker tag "$IMAGE_SRC" "$TARGET_IMAGE"
+  #       docker tag "$IMAGE_SRC" "$TARGET_IMAGE"
 
-  # ✅ Step 5: Push to Project 2
-  - name: 'gcr.io/cloud-builders/docker'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        source /workspace/env.txt
-        docker push "$TARGET_IMAGE"
+  # # ✅ Step 5: Push to Project 2
+  # - name: 'gcr.io/cloud-builders/docker'
+  #   entrypoint: 'bash'
+  #   args:
+  #     - '-c'
+  #     - |
+  #       source /workspace/env.txt
+  #       docker push "$TARGET_IMAGE"
 
 options:
   logging: CLOUD_LOGGING_ONLY
