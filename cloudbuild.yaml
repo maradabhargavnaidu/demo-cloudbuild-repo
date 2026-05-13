@@ -1,7 +1,6 @@
 steps:
-  # ✅ Step 1: Print payload (debug)
+  # ✅ Step 1: Print payload
   - name: 'gcr.io/cloud-builders/bash'
-    id: 'print-payload'
     entrypoint: 'bash'
     args:
       - '-c'
@@ -9,58 +8,47 @@ steps:
         echo "Incoming Payload:"
         echo '$_PAYLOAD'
 
-  # ✅ Step 2: Extract image (use digest or tag)
+  # ✅ Step 2: Extract image
   - name: 'gcr.io/cloud-builders/bash'
-    id: 'extract-image'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         IMAGE_SRC=$(echo '$_PAYLOAD' | jq -r '.tag')
-        # ✅ Recommended instead:
-        # IMAGE_SRC=$(echo '$_PAYLOAD' | jq -r '.digest')
-
         echo "SOURCE IMAGE: $IMAGE_SRC"
-        echo "IMAGE_SRC=$IMAGE_SRC" >> /workspace/env.txt
+        echo "IMAGE_SRC=$IMAGE_SRC" > /workspace/env.txt
 
-  # ✅ Step 3: Pull image from Project 1
+  # ✅ Step 3: Pull image
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'pull-image'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         source /workspace/env.txt
-        echo "Pulling from Project 1: $IMAGE_SRC"
-        docker pull $IMAGE_SRC
+        docker pull "$IMAGE_SRC"
 
   # ✅ Step 4: Tag for Project 2
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'tag-image'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         source /workspace/env.txt
 
-        # Replace only project ID
-        TARGET_IMAGE=$(echo $IMAGE_SRC | sed 's/project-7909eb0c-53df-4426-b83/my-sec-496201/')
+        TARGET_IMAGE=$(echo "$IMAGE_SRC" | sed 's/project-7909eb0c-53df-4426-b83/my-sec-496201/')
 
-        echo "TARGET IMAGE: $TARGET_IMAGE"
+        echo "TARGET_IMAGE=$TARGET_IMAGE" > /workspace/env.txt
 
-        docker tag $IMAGE_SRC $TARGET_IMAGE
-        echo "TARGET_IMAGE=$TARGET_IMAGE" >> /workspace/env.txt
+        docker tag "$IMAGE_SRC" "$TARGET_IMAGE"
 
   # ✅ Step 5: Push to Project 2
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'push-image'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         source /workspace/env.txt
-        echo "Pushing to Project 2: $TARGET_IMAGE"
-        docker push $TARGET_IMAGE
+        docker push "$TARGET_IMAGE"
 
 options:
   logging: CLOUD_LOGGING_ONLY
