@@ -19,3 +19,5 @@ steps:
       - 'cp'
       - '/workspace/image.tar'
       - 'gs://images-push-test/dummyspring.tar'
+options:
+  logging: CLOUD_LOGGING_ONLY
