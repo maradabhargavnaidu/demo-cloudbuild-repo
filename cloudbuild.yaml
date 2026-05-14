@@ -1,129 +1,21 @@
-
 steps:
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Pull Image'
+    args:
+      - 'pull'
+      - $_IMAGETAG
+      
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Save Tar'
     entrypoint: 'bash'
     args:
-      - '-c'
+      - 'c'
       - |
-        echo "Pulling image..."
-        docker pull $_IMAGETAG
-
-        echo "Saving image..."
         docker save -o /workspace/image.tar $_IMAGETAG
 
-        echo "Verifying file..."
-        ls -lh /workspace/
-
-        echo "Uploading to GCS..."
-        gsutil cp /workspace/image.tar gs://images-push-test/image.tar
-
-timeout: '1200s'
-
-
-
-#steps:
-#   # ✅ Step 1: Extract image from payload
-#   - name: 'bash'
-#     entrypoint: 'bash'
-#     args:
-#       - '-c'
-#       - |
-#         echo "Incoming Payload:"
-#         echo $_IMAGETAG
-
-#   # ✅ Step 2: Pull image
-#   - name: 'gcr.io/cloud-builders/docker'
-#     entrypoint: 'bash'
-#     args:
-#       - '-c'
-#       - |
-#         docker pull $_IMAGETAG
-  
-# # Step 2: Save image as tar file
-#   - name: 'gcr.io/cloud-builders/docker'
-#     entrypoint: 'bash'
-#     args:
-#       - '-c'
-#       - |
-#         docker save -o /workspace/image.tar $_IMAGETAG
-
-
-# # Step 3: Upload tar file to GCS bucket
-#   - name: 'gcr.io/cloud-builders/gsutil'
-#     entrypoint: 'bash'
-#     args:
-#       - 'c'
-#       - |
-#         gsutil cp /workspace/image.tar gs:// images-push-test/image.tar
-
-  # # ✅ Step 3: Retag for Project 2
-  # - name: 'gcr.io/cloud-builders/docker'
-  #   entrypoint: 'bash'
-  #   args:
-  #     - '-c'
-  #     - |
-  #       docker tag "$_IMAGETAG"
-
-  # # ✅ Step 4: Push image
-  # - name: 'gcr.io/cloud-builders/docker'
-  #   entrypoint: 'bash'
-  #   args:
-  #     - '-c'
-  #     - |
-        # docker push "$_IMAGETAG"
-
-options:
-  logging: CLOUD_LOGGING_ONLY
-
-#steps:
-  # ✅ Step 1: Print payload
-  #- name: 'gcr.io/cloud-builders/bash'
-   # entrypoint: 'bash'
-    #args:
-      #- '-c'
-      #- |
-       # echo "Incoming Payload:"
-       # echo '$_PAYLOAD' | jq -r '.tag'
-
-  # # ✅ Step 2: Extract image
-  # - name: 'gcr.io/cloud-builders/bash'
-  #   entrypoint: 'bash'
-  #   args:
-  #     - '-c'
-  #     - |
-  #       echo "SOURCE IMAGE:$(echo '$_PAYLOAD' | jq -r '.tag')"
-  #       echo "IMAGE_SRC=$(echo '$_PAYLOAD' | jq -r '.tag')" > /workspace/env.txt
-
-  # # ✅ Step 3: Pull image
-  # - name: 'gcr.io/cloud-builders/docker'
-  #   entrypoint: 'bash'
-  #   args:
-  #     - '-c'
-  #     - |
-  #       docker pull "$_PAYLOAD.tag"
-
-  # # ✅ Step 4: Tag for Project 2
-  # - name: 'gcr.io/cloud-builders/docker'
-  #   entrypoint: 'bash'
-  #   args:
-  #     - '-c'
-  #     - |
-  #       source /workspace/env.txt
-
-  #       TARGET_IMAGE=$(echo "$IMAGE_SRC" | sed 's/project-7909eb0c-53df-4426-b83/my-sec-496201/')
-
-  #       echo "TARGET_IMAGE=$TARGET_IMAGE" > /workspace/env.txt
-
-  #       docker tag "$IMAGE_SRC" "$TARGET_IMAGE"
-
-  # # ✅ Step 5: Push to Project 2
-  # - name: 'gcr.io/cloud-builders/docker'
-  #   entrypoint: 'bash'
-  #   args:
-  #     - '-c'
-  #     - |
-  #       source /workspace/env.txt
-  #       docker push "$TARGET_IMAGE"
-
-# options:
-#  logging: CLOUD_LOGGING_ONLY
+  - name: 'gcr.io/cloud-builders/gsutil'
+    id: 'upload tar'
+    args:
+      - 'cp'
+      - '/workspace/image.tar'
+      - 'gs://images-push-test/dummyspring.tar'
