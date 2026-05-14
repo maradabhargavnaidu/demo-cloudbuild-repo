@@ -12,6 +12,7 @@ steps:
       - 'c'
       - |
         docker save -o /workspace/image.tar $_IMAGETAG
+        ls -l /workspace
 
   - name: 'gcr.io/cloud-builders/gsutil'
     id: 'upload tar'
