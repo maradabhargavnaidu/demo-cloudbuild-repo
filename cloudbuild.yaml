@@ -8,13 +8,13 @@ steps:
         echo "Incoming Payload:"
         echo $_IMAGETAG
 
-  # ✅ Step 2: Pull image
-  - name: 'gcr.io/cloud-builders/docker'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        docker pull $_IMAGETAG
+  # # ✅ Step 2: Pull image
+  # - name: 'gcr.io/cloud-builders/docker'
+  #   entrypoint: 'bash'
+  #   args:
+  #     - '-c'
+  #     - |
+  #       docker pull $_IMAGETAG
 
   # # ✅ Step 3: Retag for Project 2
   # - name: 'gcr.io/cloud-builders/docker'
