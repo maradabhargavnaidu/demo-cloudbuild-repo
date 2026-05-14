@@ -1,22 +1,24 @@
+
 steps:
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        echo "Incoming Payload:"
-        echo $_IMAGETAG
-
         echo "Pulling image..."
         docker pull $_IMAGETAG
 
-        echo "Saving image as tar..."
+        echo "Saving image..."
         docker save -o /workspace/image.tar $_IMAGETAG
 
-        echo "Uploading to GCS bucket..."
+        echo "Verifying file..."
+        ls -lh /workspace/
+
+        echo "Uploading to GCS..."
         gsutil cp /workspace/image.tar gs://images-push-test/image.tar
 
 timeout: '1200s'
+
 
 
 #steps:
