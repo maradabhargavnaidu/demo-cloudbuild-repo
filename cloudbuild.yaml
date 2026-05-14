@@ -20,23 +20,28 @@ steps:
   # Step 3: Upload tar to GCS
   - name: 'gcr.io/cloud-builders/gsutil'
     id: 'Upload Tar'
-    args:
-      - 'cp'
-      - '/workspace/image.tar'
-      - 'gs://images-push-test/$_IMAGETAG.tar'
-      
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Retag image'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        DESTIMAGE=$(echo $_IMAGETAG) | \
-        sed 's/project-7909eb0c-53df-4426-b83/my-sec-496201/' | \
-        sed 's/first-gar/sec-gar/')
-        echo "Destination Image: $DESTIMAGE"
-        docker tag $_IMAGETAG $DESTIMAGE
-        echo $DESTIMAGE > /workspace/dest_image.txt
+        SAFE_TAG=$(echo "${_IMAGETAG}" | tr '/:' '_')
+        gsutil cp /workspace/image.tar gs://images-push-test/${SAFE_TAG}.tar
+
+  # Step 4: Retag image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Retag Image'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        DESTIMAGE=$(echo "${_IMAGETAG}" | sed 's/project-7909eb0c-53df-4426-b83/my-sec-496201/' | sed 's/first-gar/sec-gar/')
+        echo "Destination Image: ${DESTIMAGE}"
+
+        docker tag "${_IMAGETAG}" "${DESTIMAGE}"
+
+        echo "${DESTIMAGE}" > /workspace/dest_image.txt
+
+  # Step 5: Push image
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Push Image'
     entrypoint: 'bash'
@@ -44,8 +49,9 @@ steps:
       - '-c'
       - |
         DESTIMAGE=$(cat /workspace/dest_image.txt)
-        docker push $DESTIMAGE
-      
+        echo "Pushing image: ${DESTIMAGE}"
+
+        docker push "${DESTIMAGE}"
 
 options:
   logging: CLOUD_LOGGING_ONLY
