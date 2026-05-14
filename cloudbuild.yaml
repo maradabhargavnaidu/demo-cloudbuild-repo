@@ -31,7 +31,7 @@ steps:
     args:
       - '-c'
       - |
-        $DESTIMAGE=$(echo ${_IMAGETAG}) | \
+        DESTIMAGE=$(echo ${_IMAGETAG}) | \
         sed 's/project-7909eb0c-53df-4426-b83/my-sec-496201/' | \
         sed 's/first-gar/sec-gar/')
         echo "Destination Image: $$DESTIMAGE"
@@ -43,7 +43,7 @@ steps:
     args:
       - '-c'
       - |
-        $DESTIMAGE=$(cat /workspace/dest_image.txt)
+        DESTIMAGE=$(cat /workspace/dest_image.txt)
         docker push $$DESTIMAGE
       
 
