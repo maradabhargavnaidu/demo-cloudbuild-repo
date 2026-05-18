@@ -23,7 +23,7 @@ steps:
     args:
       - 'cp'
       - '/workspace/image.tar'
-      - 'gs://images-push-test/$_IMAGETAG.tar'
+      - 'gs://images-push-tests/$_IMAGETAG.tar'
       
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Retag image'
@@ -32,8 +32,8 @@ steps:
       - '-c'
       - |
         DESTIMAGE=$(echo ${_IMAGETAG} | \
-        sed 's/project-7909eb0c-53df-4426-b83/my-sec-496201/' | \
-        sed 's/first-gar/sec-gar/')
+        sed 's/project-7909eb0c-53df-4426-b83/arcane-woods-487914-v7/' | \
+        sed 's/first-gar/teambgar/')
         echo "Destination Image: $$DESTIMAGE"
         docker tag ${_IMAGETAG} $$DESTIMAGE
         echo $$DESTIMAGE > /workspace/dest_image.txt
