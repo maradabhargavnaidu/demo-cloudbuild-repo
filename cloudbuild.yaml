@@ -7,15 +7,15 @@ steps:
       - '${_IMAGETAG}'
 
   # Step 2: Save image as tar
-  # - name: 'gcr.io/cloud-builders/docker'
-  #   id: 'Save Tar'
-  #   entrypoint: 'bash'
-  #   args:
-  #     - '-c'
-  #     - |
-  #       docker save -o /workspace/image.tar ${_IMAGETAG}
-  #       echo "Listing workspace contents:"
-  #       ls -l /workspace
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Save Tar'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        docker save -o /workspace/image.tar ${_IMAGETAG}
+        echo "Listing workspace contents:"
+        ls -l /workspace
 
   # # Step 3: Upload tar to GCS
   # - name: 'gcr.io/cloud-builders/gsutil'
